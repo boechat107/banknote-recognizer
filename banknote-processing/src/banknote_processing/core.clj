@@ -27,7 +27,13 @@
   "Returns a function which calculates the associations between two images
   accordingly with the feature description and scorer algorithms.
   If the last argument is :debug, a window is showed to visulize the associations
-  between the images."
+  between the images.
+  Ex.:
+  (let [assoc-fn (get-association-fn fa sc)]
+    (assoc-fn img1 img2))
+  => {:association associate 
+      :src-points positions-src
+      :dst-points positions-dest}"
   [^DetectDescribePoint feat-alg scorer & opts]
   (let [;; Function to detect the interested points of an image and returns their
         ;; locations and descriptions.
@@ -45,7 +51,8 @@
         associate (FactoryAssociation/greedy scorer 1 true) 
         debug (some #(= :debug %) opts)]
     (fn [img-src img-dst]
-      ;; Returns the AssociateDescription object which gives us the matches.
+      ;; Returns the AssociateDescription object and the source/destination points 
+      ;; positions.
       (let [gray-src (p/to-gray img-src)
             gray-dst (p/to-gray img-dst)
             ;; Interested points of the first image.
@@ -62,7 +69,9 @@
             (.setAssociation panel positions-src positions-dest (.getMatches associate))
             (.setImages panel (h/to-buffered-image gray-src) (h/to-buffered-image gray-dst))
             (ShowImages/showWindow panel "Associated features")))
-        associate))))
+        {:association associate 
+         :src-points positions-src
+         :dst-points positions-dest}))))
 
 (def timg1 (h/load-file-image "/home/andre/Dropbox/Photos/banknotes_samples/20reais_old.jpg"))
 (def timg2 (h/load-file-image "/home/andre/Dropbox/Photos/banknotes_samples/natural_100.jpg"))
