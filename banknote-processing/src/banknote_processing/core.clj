@@ -9,6 +9,7 @@
   (:import 
     [boofcv.factory.feature.detdesc FactoryDetectDescribe]
     [boofcv.factory.feature.associate FactoryAssociation]
+    [boofcv.factory.geo FactoryMultiView]
     [boofcv.abst.feature.detdesc DetectDescribePoint]
     [boofcv.abst.feature.associate ScoreAssociation]
     [boofcv.abst.feature.detect.interest ConfigFastHessian]
@@ -90,3 +91,7 @@
     )
   )
 
+(defn fundamental-matrix
+  [pairs-list]
+  (let [estimator (FactoryMultiView/)])
+  )
