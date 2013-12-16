@@ -9,10 +9,11 @@
   (:import 
     [boofcv.factory.feature.detdesc FactoryDetectDescribe]
     [boofcv.factory.feature.associate FactoryAssociation]
-    [boofcv.factory.geo FactoryMultiView]
+    [boofcv.factory.geo FactoryMultiView EnumEpipolar]
     [boofcv.abst.feature.detdesc DetectDescribePoint]
     [boofcv.abst.feature.associate ScoreAssociation]
     [boofcv.abst.feature.detect.interest ConfigFastHessian]
+    [boofcv.abst.geo.fitting GenerateEpipolarMatrix]
     [boofcv.struct.feature SurfFeature TupleDesc AssociatedIndex]
     [boofcv.struct.image ImageFloat32 ImageSInt32]
     [boofcv.struct.geo AssociatedPair]
@@ -93,5 +94,9 @@
 
 (defn fundamental-matrix
   [pairs-list]
-  (let [estimator (FactoryMultiView/)])
+  (let [estimator (-> (FactoryMultiView/computeFundamental_l 
+                        EnumEpipolar/FUNDAMENTAL_7_LINEAR
+                        20)
+                      (GenerateEpipolarMatrix.))
+        ])
   )
