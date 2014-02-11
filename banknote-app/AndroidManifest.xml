@@ -7,8 +7,12 @@
     <uses-sdk
         android:minSdkVersion="11"
         android:targetSdkVersion="15" />
-    <uses-feature android:name="android.hardware.camera" android:required="true"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true" />
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -27,6 +31,14 @@
         <activity
             android:name="com.example.banknote_app.DisplayMessageActivity"
             android:label="@string/title_activity_display_message"
+            android:parentActivityName="com.example.banknote_app.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.banknote_app.MainActivity" />
+        </activity>
+        <activity
+            android:name="com.example.banknote_app.DisplayImage"
+            android:label="@string/title_activity_display_image"
             android:parentActivityName="com.example.banknote_app.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
