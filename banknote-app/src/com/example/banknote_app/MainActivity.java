@@ -6,17 +6,16 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import android.app.Activity;
-import android.content.Context;
+import android.app.AlertDialog;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageView;
 
 public class MainActivity extends Activity {
 	public final static String EXTRA_MESSAGE = "banknotes_app.MESSAGE";
@@ -42,15 +41,28 @@ public class MainActivity extends Activity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
     	if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
     		// Setting a simple bitmap on the main window using the taken photo.
-    		Bundle extras = data.getExtras();
-    		Bitmap imgBitmap = (Bitmap) extras.get("data");
-    		ImageView imgViewer = (ImageView) findViewById(R.id.photo_viewer);
-    		imgViewer.setImageBitmap(imgBitmap);
-    		
+//    		Bundle extras = data.getExtras();
+//    		Bitmap imgBitmap = (Bitmap) extras.get("data");
+//    		ImageView imgViewer = (ImageView) findViewById(R.id.photo_viewer);
+//    		imgViewer.setImageBitmap(imgBitmap);
+    		File imgFile = new File(_currentPhotoPath);
+    		if (imgFile.exists()) {
+    			Intent i = new Intent();
+    			i.setAction(android.content.Intent.ACTION_VIEW);
+    			i.setDataAndType(Uri.fromFile(imgFile), "image/jpg");
+    			startActivity(i);
+    		} else {
+    			Log.d("CameraPhoto", "Error");
+    		}
+
     		// Opening a new window to show the full size image.
-    		Intent intent = new Intent(this, DisplayImage.class);
-    		intent.putExtra(EXTRA_PHOTOPATH, _currentPhotoPath);
-    		startActivity(intent);
+//    		Intent intent = new Intent(this, DisplayImage.class);
+//    		intent.putExtra(EXTRA_PHOTOPATH, _currentPhotoPath);
+//    		startActivity(intent);
+    	} else {
+    		AlertDialog alert = new AlertDialog.Builder(this).create();
+    		alert.setMessage("Image not taken");
+    		alert.show();
     	}
     }
     
@@ -65,16 +77,26 @@ public class MainActivity extends Activity {
     private File createImageFile() throws IOException {
     	// Image filename.
     	String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-    	String imgFilename = "image_" + timeStamp;
+    	String imgFilename = "JPG_" + timeStamp;
     	File storageDir = Environment.getExternalStoragePublicDirectory(
     			Environment.DIRECTORY_PICTURES);
+    	if (!storageDir.exists())
+    		if (!storageDir.mkdirs()) {
+    			AlertDialog alert = new AlertDialog.Builder(this).create();
+    			alert.setMessage("Directory was not created!");
+    			alert.show();
+    			return null;
+    		}
+    		
+//    	File output = new File(storageDir.getPath(), imgFilename);
     	File output = File.createTempFile(
     			imgFilename, // prefix
     			".jpg", // suffix
     			storageDir // directory
     			);
     	// Save a file: path for use with ACTION_VIEW intents
-    	_currentPhotoPath = "file:" + output.getAbsolutePath();
+//    	_currentPhotoPath = "file:" + output.getAbsolutePath();
+    	_currentPhotoPath = output.getAbsolutePath();
     	return output;
     }
     
@@ -89,6 +111,9 @@ public class MainActivity extends Activity {
 				// TODO: handle exception
 				// http://stackoverflow.com/questions/10954114/android-how-to-display-a-dialog-from-error-of-a-try-catch
 				// http://stackoverflow.com/questions/5362929/runtimeexception-on-alertdialog-show
+				AlertDialog alert = new AlertDialog.Builder(this).create();
+				alert.setMessage("File not created!");
+				alert.show();
 				e.printStackTrace();
 				return;
 			}
