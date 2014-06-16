@@ -13,7 +13,7 @@
     [boofcv.abst.feature.detdesc DetectDescribePoint]
     [boofcv.abst.feature.associate ScoreAssociation]
     [boofcv.abst.feature.detect.interest ConfigFastHessian]
-    [boofcv.abst.geo.fitting GenerateEpipolarMatrix DistanceFromModelResidual]
+    [boofcv.abst.geo.fitting GenerateEpipolarMatrix DistanceFromModelResidual ModelManagerEpipolarMatrix]
     [boofcv.struct.feature SurfFeature TupleDesc AssociatedIndex]
     [boofcv.struct.image ImageFloat32 ImageSInt32]
     [boofcv.struct.geo AssociatedPair]
@@ -82,6 +82,7 @@
         ;; Using ransac for a robust estimation of the matrix.
         ransac-model (Ransac. 
                        1234 ; random seed.
+                       (ModelManagerEpipolarMatrix.) ; managerF
                        estimation ; first model.
                        ;; Error metric.
                        (DistanceFromModelResidual. (FundamentalResidualSampson.))
@@ -100,7 +101,7 @@
               nil 
               ImageSInt32)
         scorer (FactoryAssociation/scoreEuclidean SurfFeature true)
-        assoc-fn (get-association-fn ddp scorer :debug)
+        assoc-fn (get-association-fn ddp scorer)
         ;; Visualization function to debug.
         debug (fn [pairs]
                 (let [panel (AssociationPanel. 20)]
